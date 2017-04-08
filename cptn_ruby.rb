@@ -207,8 +207,8 @@ class CptnRuby < (Example rescue Gosu::Window)
     move_x = 0
     move_x -= 5 if Gosu.button_down? Gosu::KB_LEFT
     move_x += 5 if Gosu.button_down? Gosu::KB_RIGHT
-    move_x += 10 if Gosu.button_down? Gosu::KB_RIGHT_CONTROL and Gosu.button_down? Gosu::KB_RIGHT
-    move_x -= 10 if Gosu.button_down? Gosu::KB_RIGHT_CONTROL and Gosu.button_down? Gosu::KB_LEFT
+    move_x += 10 if Gosu.button_down? Gosu::KB_SPACE and Gosu.button_down? Gosu::KB_RIGHT
+    move_x -= 10 if Gosu.button_down? Gosu::KB_SPACE and Gosu.button_down? Gosu::KB_LEFT
     move_x -= 10 if Gosu.button_down? Gosu::KB_F1 and Gosu.button_down? Gosu::KB_LEFT
     @cptn.update(move_x)
     @cptn.collect_gems(@map.gems)
