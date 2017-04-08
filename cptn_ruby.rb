@@ -30,7 +30,7 @@
 require 'rubygems'
 require 'gosu'
 
-WIDTH, HEIGHT = 640, 480
+WIDTH, HEIGHT =1000, 600
 
 module Tiles
   Grass = 0
@@ -61,12 +61,14 @@ class Player
     @vy = 0 # Vertical velocity
     @map = map
     # Load all animation frames
-    @standing, @walk1, @walk2, @jump = *Gosu::Image.load_tiles("perso.png", 50, 50)
+    @standing, @walk1, @walk2, @jump = *Gosu::Image.load_tiles("cptn_ruby.png", 50, 50)
     # This always points to the frame that is currently drawn.
     # This is set in update, and used in draw.
     @cur_image = @standing
-  end
+    #@musics = Gosu::Sample.new("media/Pok_mon_Red_Blue_Yellow_Music_GameBoy_-_Opening_Th.wav")
 
+
+end
   def draw
     # Flip vertically when facing to the left.
     if @dir == :left
@@ -111,6 +113,7 @@ class Player
     # By adding 1 each frame, and (ideally) adding vy to y, the player's
     # jumping curve will be the parabole we want it to be.
     @vy += 1
+
     # Vertical movement
     if @vy > 0
       @vy.times { if would_fit(0, 1) then @y += 1 else @vy = 0 end }
@@ -122,7 +125,7 @@ class Player
 
   def try_to_jump
     if @map.solid?(@x, @y + 1)
-      @vy = -20
+      @vy = -30
     end
   end
 
@@ -195,15 +198,18 @@ class CptnRuby < (Example rescue Gosu::Window)
 
     @sky = Gosu::Image.new("space.png", :tileable => true)
     @map = Map.new("cptn_ruby_map.txt")
-    @cptn = Player.new(@map, 0, 100)
+    @cptn = Player.new(@map, 400, 100)
     # The scrolling position is stored as top left corner of the screen.
     @camera_x = @camera_y = 0
   end
 
   def update
     move_x = 0
-    move_x -= 3 if Gosu.button_down? Gosu::KB_LEFT
-    move_x += 3 if Gosu.button_down? Gosu::KB_RIGHT
+    move_x -= 5 if Gosu.button_down? Gosu::KB_LEFT
+    move_x += 5 if Gosu.button_down? Gosu::KB_RIGHT
+    move_x += 10 if Gosu.button_down? Gosu::KB_RIGHT_CONTROL and Gosu.button_down? Gosu::KB_RIGHT
+    move_x -= 10 if Gosu.button_down? Gosu::KB_RIGHT_CONTROL and Gosu.button_down? Gosu::KB_LEFT
+    move_x -= 10 if Gosu.button_down? Gosu::KB_F1 and Gosu.button_down? Gosu::KB_LEFT
     @cptn.update(move_x)
     @cptn.collect_gems(@map.gems)
     # Scrolling follows player
