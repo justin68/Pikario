@@ -47,13 +47,13 @@ class CollectibleGem
 
   def draw
     # Draw, slowly rotating
-    @image.draw_rot(@x, @y, 0, 25 * Math.sin(Gosu.milliseconds / 133.7))
+    @image.draw(@x, @y - 20, 0)
   end
 end
 
 # Player class.
 class Player
-  attr_reader :x, :y
+  attr_reader :x, :y, :score
 
   def initialize(map, x, y)
     @x, @y = x, y
@@ -65,6 +65,7 @@ class Player
     # This always points to the frame that is currently drawn.
     # This is set in update, and used in draw.
     @cur_image = @standing
+    @score = 0
     #@musics = Gosu::Sample.new("media/Pok_mon_Red_Blue_Yellow_Music_GameBoy_-_Opening_Th.wav")
 
 
@@ -129,10 +130,28 @@ end
     end
   end
 
+# Happened when gems are collected
   def collect_gems(gems)
-    # Same as in the tutorial game.
     gems.reject! do |c|
       (c.x - @x).abs < 50 and (c.y - @y).abs < 50
+      if Gosu.distance(@x, @y, c.x, c.y) < 35
+        @score += 20
+        true
+      else
+        false
+      end
+    end
+  end
+
+  def collect_enemy(gems)
+    gems.reject! do |c|
+      (c.x - @x).abs < 50 and (c.y - @y).abs < 50
+      if Gosu.distance(@x, @y, c.x, c.y) < 35
+        @score += 20
+        true
+      else
+        false
+      end
     end
   end
 end
@@ -201,6 +220,7 @@ class CptnRuby < (Example rescue Gosu::Window)
     @cptn = Player.new(@map, 400, 100)
     # The scrolling position is stored as top left corner of the screen.
     @camera_x = @camera_y = 0
+    @font = Gosu::Font.new(20)
   end
 
   def update
@@ -218,11 +238,13 @@ class CptnRuby < (Example rescue Gosu::Window)
   end
 
   def draw
+
     @sky.draw 0, 0, 0
     Gosu.translate(-@camera_x, -@camera_y) do
       @map.draw
       @cptn.draw
     end
+    @font.draw("Score: #{@cptn.score}", 10, 10, 3, 1.0, 1.0, Gosu::Color::WHITE)
   end
 
   def button_down(id)
